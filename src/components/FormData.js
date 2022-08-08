@@ -35,11 +35,12 @@ const DataForm = () => {
     }
 
     const onChangeCompany = (e, i) => {
+
         setOrderDetails({
             ...orderDetails,
             details:[{
-                ...orderDetails.details[i][e.target.name] = e.target.value
-                // [e.target.name]: e.target.value
+                // ...updateDetail[i],
+                    [e.target.name]:e.target.value
             }]
         });
     }
@@ -58,20 +59,117 @@ const DataForm = () => {
     const orderBlank = {color: '', size: ''};
     const handleUpdate = (i) => {
 
-        setOrderDetails([orderDetails.details,({color: '', size: ''})]);
+        // setOrderDetails([orderDetails.details,({color: '', size: ''})]);
         // const ddd = [orderDetails.details]
-        // setOrderDetails({
-        //
-        //     details:[{
-        //         ...orderDetails.details,
-        //         color: 'ssss', size: 'ssss'
-        //     }]
-        // }
-        // )
+        setOrderDetails({
+
+            details:[{
+                ...orderDetails.details,
+                color: 'ssss', size: 'ssss'
+            }]
+        }
+        )
     }
-    console.log(orderDetails)
+
+
+const initial = {
+    username: '',
+    email: '',
+    address:[ {
+        state: '',
+        city: '',
+
+    }]
+}
+
+    const [card, setCard] = React.useState([]);
+    const [user, setUser] = React.useState(initial);
+
+
+    const onChange = (e, i) => {
+        let data = { ...user };
+        let name = e.target.name;
+        let val = e.target.value;
+        if (name == 'username' || name == 'email') {
+            data = { ...data, [name]: val };
+        } else if (name == 'state' || name == 'city') {
+            data = {
+                ...data,
+                address: {
+                    ...data.address,
+                    [name]: val
+                }
+            };
+        }
+        setUser(data);
+    };
+
+    const submit = e => {
+        e.preventDefault();
+        let data = {...user, ...initial}
+        setUser(data)
+        // add()
+        // setUser({...initial, ...initial.address})
+        console.log(data);
+    };
+
+
+    // {console.log(Object.values(user))}
     return (
         <>
+
+            <div>
+                {/*<Button onClick=>user</Button>*/}
+                <form action="">
+                    <div className="form-group">
+                        <input
+                            type="text"
+                            className="form-control"
+                            placeholder="Username"
+                            name="username"
+                            value={user.username}
+                            onChange={onChange}
+                        />
+                    </div>
+                    <div className="form-group">
+                        <input
+                            type="text"
+                            className="form-control"
+                            placeholder="Email"
+                            value={user.email}
+                            name="email"
+                            onChange={onChange}
+                        />
+                    </div>
+                    <div className="form-group">
+                        <input
+                            type="text"
+                            className="form-control"
+                            placeholder="State"
+                            name="state"
+                            value={user.address.state}
+                            onChange={onChange}
+                        />
+                    </div>
+                    <div className="form-group">
+                        <input
+                            type="text"
+                            className="form-control"
+                            placeholder="City"
+                            name="city"
+                            value={user.address.city}
+                            onChange={onChange}
+                        />
+                    </div>
+
+                    <div className="form-group">
+                        <button className="btn btn-primary" onClick={submit}>
+                            Submit
+                        </button>
+                    </div>
+                </form>
+
+            </div>
             <Button onClick={handleUpdate}>up</Button>
             <Box m={5}>
                 <Typography variant='h6'>Handle State with Object</Typography>

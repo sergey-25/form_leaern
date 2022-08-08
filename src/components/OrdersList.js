@@ -14,13 +14,13 @@ function OrdersList({formValues,orderHead, orderDetails, setOrderHead, setOrderD
             <Button onClick={()=>console.log(orderDetails)}>result</Button>
 
             <div>
-                {formValues.map((value, index) =>{
-                    return(
-                        <>
-                            <p>{value.name}</p>
-                        </>
-                    )
-                })}
+                {/*{formValues.map((value, index) =>{*/}
+                {/*    return(*/}
+                {/*        <>*/}
+                {/*            <p>{value.name}</p>*/}
+                {/*        </>*/}
+                {/*    )*/}
+                {/*})}*/}
             </div>
             OrdersList
         </div>

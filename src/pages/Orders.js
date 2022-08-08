@@ -4,6 +4,8 @@ import OrdersList from "../components/OrdersList";
 import OrderForm from "../components/OrderForm";
 import DataForm from "../components/FormData";
 import YouTubeForm from "../components/YouTubeForm";
+import TestApp from "../components/TestApp";
+import Persons from "../components/Persons";
 
 function Orders(props) {
 
@@ -79,10 +81,11 @@ function Orders(props) {
 
     return (
         <>
-            {console.log(some[0].main)}
+            <Persons/>
+         {/*<TestApp/>*/}
 
-            <YouTubeForm/>
-            <DataForm/>
+            {/*<YouTubeForm/>*/}
+            {/*<DataForm/>*/}
 
             <div>
 
