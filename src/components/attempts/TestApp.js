@@ -9,8 +9,9 @@ function Todo({todo, index, completeTodo, removeTodo}) {
         >
 
             <p>
-                {todo.username}-----------
-                {todo.email}
+                {/*{todo[1]}-----------*/}
+                {/*{todo[1]}*/}
+                {console.log(todo)}
             </p>
 
             <div>
@@ -39,7 +40,7 @@ function TodoForm({addTodo}) {
     const handleSubmit = e => {
         e.preventDefault();
         if (!value) return;
-        setValue(...initial);
+        setValue([initial]);
         addTodo(value);
         console.log(value)
     };
@@ -56,7 +57,7 @@ function TodoForm({addTodo}) {
 
     const onChangeCompany = (e, i) => {
         setValue({
-            ...value,
+            value,
             address: [{
                 ...value[i]
                     [e.target.name] = e.target.value
@@ -90,7 +91,7 @@ function TodoForm({addTodo}) {
                                 name='state'
                                 placeholder="state"
                                 className="input"
-                                value={item[i].state}
+                                value={item.state}
                                 onChange={e => onChangeCompany(e, i)}
                             />
                             <input
@@ -98,7 +99,7 @@ function TodoForm({addTodo}) {
                                 placeholder="city"
                                 name='city'
                                 className="input"
-                                value={item[i].city}
+                                value={item.city}
                                 onChange={e => onChangeCompany(e, i)}
                             />
                         </>
@@ -125,7 +126,7 @@ function TestApp() {
 
     const [todos, setTodos] = React.useState([]);
 
-    const addTodo = ({username, email, address: {state, city}}) => {
+    const addTodo = ({username, email, state, city}) => {
         const newTodos = [...todos, {username, email, state, city}];
         setTodos(newTodos);
         console.log(todos)
