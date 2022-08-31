@@ -18,7 +18,7 @@ export const StyledPaper = styled(Paper)(({theme}) => ({
 
 
 const StyledTable = styled(Table)(({theme}) => ({
-    borderCollapse:'collapse'
+    borderCollapse: 'collapse'
 }));
 
 const StyledTableHeadCell = styled(TableCell)(({theme}) => ({
@@ -136,7 +136,7 @@ export default function useTable(records, headCells, filterFn, serviceRecords) {
     }
 
     const recordsAfterPagingAndSorting = () => {
-        if (records){
+        if (records) {
             return stableSort(filterFn.fn(records), getComparator(order, orderBy))
         } else
             return stableSort(filterFn.fn(serviceRecords), getComparator(order, orderBy))

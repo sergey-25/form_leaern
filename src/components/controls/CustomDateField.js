@@ -21,7 +21,6 @@ export default function CustomDateField(props) {
             dateAdapter={AdapterDateFns}
             locale={uk}>
             <DesktopDatePicker
-                mask="__/__/____"
                 disablePast='true'
                 InputProps={InputProps}
                 value={value}

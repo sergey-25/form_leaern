@@ -75,7 +75,7 @@ export default function AmountComponent() {
             }
         })
     };
-    const handleSearchService= e => {
+    const handleSearchService = e => {
         e.stopPropagation();
         let target = e.target;
         setFilterFn({
@@ -140,9 +140,9 @@ export default function AmountComponent() {
                              value="1"
                              sx={{
                                  padding: 0,
-                                 paddingLeft:'10px',
-                                 paddingRight:'10px',
-                                 color:'#fff',
+                                 paddingLeft: '10px',
+                                 paddingRight: '10px',
+                                 color: '#fff',
                                  '&.Mui-selected': {
                                      color: '#a4b9d6'
                                  },
@@ -152,10 +152,10 @@ export default function AmountComponent() {
                              value="2"
                              sx={{
                                  padding: 0,
-                                 paddingLeft:'10px',
-                                 paddingRight:'10px',
-                                 color:'#fff',
-                                  '&.Mui-selected': {
+                                 paddingLeft: '10px',
+                                 paddingRight: '10px',
+                                 color: '#fff',
+                                 '&.Mui-selected': {
                                      color: '#a4b9d6'
                                  },
                              }}
@@ -209,9 +209,8 @@ export default function AmountComponent() {
                     <ServicesComponent
                         // records={records}
                         // setRecords={setRecords}
-                    serviceRecords={serviceRecords}
-                    setServiceRecords={setServiceRecords}
-
+                        serviceRecords={serviceRecords}
+                        setServiceRecords={setServiceRecords}
                     />
                 </TabPanel>
             </TabContext>

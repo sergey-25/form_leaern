@@ -145,9 +145,9 @@ function OrdersComponent({records, setRecords, filterFn, setFilterFn}) {
                                         Перегляд замовлення
                                     </Typography>
                             }
-                          <IconButton>
-                              <PrintOutlinedIcon style={{color:'#a4b9d6'}}/>
-                          </IconButton>
+                            <IconButton>
+                                <PrintOutlinedIcon style={{color: '#a4b9d6'}}/>
+                            </IconButton>
                         </Toolbar>
                     </AppBar>
                     <OrderForm

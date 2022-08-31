@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useMemo, useState} from 'react';
 import {useForm, Form} from '../../hooks/useForm';
 import {styled} from '@mui/material/styles';
 
@@ -10,7 +10,7 @@ import {
     Grid,
     IconButton,
     MenuItem,
-    Select, TableBody, TableCell, TableHead, TableRow,
+    Select, TableBody, TableCell, TableContainer, TableHead, TableRow,
     TextField, Tooltip
 
 } from "@mui/material";
@@ -40,6 +40,12 @@ const sizeShoesOptions = [
     {id: '40', title: '40'},
     {id: '41', title: '41'},
     {id: '42', title: '42'}
+]
+const priorityOptions = [
+    {id: 'high', title: 'Висока'},
+    {id: 'medium', title: 'Помірна'},
+    {id: 'low', title: 'Низька'},
+
 ]
 
 export const StyledTable = styled(Table)(({theme}) => ({
@@ -96,7 +102,6 @@ function OrderForm({
                        setOpenForm, initialValues, addOrEdit, recordForEdit, isDisabled,
                        setIsDisabled, setIsLoading
                    }) {
-    const [selectValue, setSelectValue] = useState('');
 
     // const [anchorEl, setAnchorEl] = useState(false);
     //
@@ -187,11 +192,10 @@ function OrderForm({
         handleInputChange,
         handleValuesChange,
         handleDetailChange,
-        handleSelectReplaceChange,
         resetForm
     } = useForm(
         initialValues,
-        true, validate, setSelectValue, selectValue
+        true, validate
     );
 
 
@@ -229,7 +233,6 @@ function OrderForm({
     };
 
 
-
     return (
         <div>
             <Container maxWidth='false'>
@@ -239,7 +242,7 @@ function OrderForm({
                               xs={12} md={6} l={3}
                               direction='column'>
                             <Grid item xs={12} md={6} l={3}>
-                                <TextField required fullWidth variant='standard' name='address' label='Адреса'
+                                <TextField required fullWidth='true' variant='standard' name='address' label='Адреса'
                                            onChange={handleInputChange} value={values.address}
                                            error={!!errors.address}
                                            disabled={isDisabled}
@@ -251,13 +254,14 @@ function OrderForm({
                                 />
                             </Grid>
                             <Grid item xs={12} md={6} l={3}>
-                                <TextField fullWidth variant='standard' name='recipient' label='Одержувач'
+                                <TextField fullWidth='true'
+                                           variant='standard' name='recipient' label='Одержувач'
                                            onChange={handleValuesChange} value={values.recipient}
                                            disabled={isDisabled}
                                 />
                             </Grid>
                             <Grid item xs={12} md={6} l={3}>
-                                <TextField fullWidth
+                                <TextField fullWidth='true'
                                            multiline
                                            rows={3}
                                            variant='standard' name='comment' label='Коментар'
@@ -269,31 +273,114 @@ function OrderForm({
                         <br/>
                         <br/>
                         <div>
-                            <StyledTable>
-                                <StyledTableHead>
-                                    <TableRow>
-                                        <StyledTableCellHead>Категорія</StyledTableCellHead>
-                                        <StyledTableCellHead>Найменування</StyledTableCellHead>
-                                        <StyledTableCellHead>Колір</StyledTableCellHead>
-                                        <StyledTableCellHead>Розмір</StyledTableCellHead>
-                                        <StyledTableCellHead>Кількість</StyledTableCellHead>
-                                        <StyledTableCellHead>Посилання</StyledTableCellHead>
-                                        <StyledTableCellHead>Коментар</StyledTableCellHead>
-                                        <StyledTableCellHead>Термін</StyledTableCellHead>
-                                        <StyledTableCellHead>Важливість</StyledTableCellHead>
-                                        <StyledTableCellHead>Дії</StyledTableCellHead>
-                                    </TableRow>
-                                </StyledTableHead>
-                                <TableBody>
-                                    {values.details.map((value, i) => {
-                                        return (
-                                            <StyledTableRow key={i}>
-                                                {/*<TableCell style={{padding:'0'}}>*/}
-                                                {/*    <span style={{fontSize: '18px'}}>{i + 1}: </span>*/}
-                                                {/*</TableCell>*/}
-                                                <StyledTableCellBody>
-                                                    <FormControl fullWidth>
-                                                        <Select
+                            <TableContainer style={{overflowX: 'auto'}}>
+                                <StyledTable>
+                                    <StyledTableHead>
+                                        <TableRow>
+                                            <StyledTableCellHead>Категорія</StyledTableCellHead>
+                                            <StyledTableCellHead>Найменування</StyledTableCellHead>
+                                            <StyledTableCellHead>Колір</StyledTableCellHead>
+                                            <StyledTableCellHead>Розмір</StyledTableCellHead>
+                                            <StyledTableCellHead>Кількість</StyledTableCellHead>
+                                            <StyledTableCellHead>Посилання</StyledTableCellHead>
+                                            <StyledTableCellHead>Коментар</StyledTableCellHead>
+                                            <StyledTableCellHead>Термін</StyledTableCellHead>
+                                            <StyledTableCellHead>Важливість</StyledTableCellHead>
+                                            <StyledTableCellHead>Дії</StyledTableCellHead>
+                                        </TableRow>
+                                    </StyledTableHead>
+                                    <TableBody>
+                                        {values.details.map((value, i) => {
+                                            return (
+                                                <StyledTableRow key={i}>
+                                                    {/*<TableCell style={{padding:'0'}}>*/}
+                                                    {/*    <span style={{fontSize: '18px'}}>{i + 1}: </span>*/}
+                                                    {/*</TableCell>*/}
+                                                    <StyledTableCellBody>
+                                                        <FormControl fullWidth='true'>
+                                                            <Select
+                                                                defaultValue=""
+                                                                SelectDisplayProps={{
+                                                                    style: {
+                                                                        fontWeight: 600,
+                                                                        display: 'flex',
+                                                                        justifyContent: 'center'
+                                                                    }
+                                                                }}
+                                                                variant='standard'
+                                                                labelId="demo-simple-select-label"
+                                                                id="demo-simple-select"
+                                                                value={values.details[i].category}
+                                                                name='category'
+                                                                disableUnderline
+                                                                onChange={(e) => {
+                                                                    handleDetailChange(e, i, value)
+                                                                }}
+                                                                disabled={isDisabled}
+
+                                                            >
+                                                                <MenuItem
+                                                                    style={{
+                                                                        fontSize: '14px',
+                                                                        justifyContent: 'center',
+                                                                    }}
+                                                                    divider={true}
+                                                                    value={'clothing'}>
+                                                                    Одяг
+                                                                </MenuItem>
+                                                                <MenuItem
+                                                                    style={{
+                                                                        fontSize: '14px',
+                                                                        justifyContent: 'center',
+                                                                    }}
+                                                                    divider={true}
+                                                                    value={'footwear'}>
+                                                                    Взуття
+                                                                </MenuItem>
+                                                                <MenuItem
+                                                                    style={{
+                                                                        fontSize: '14px',
+                                                                        justifyContent: 'center',
+                                                                    }}
+                                                                    divider={true}
+                                                                    value={'other'}>
+                                                                    Інше
+                                                                </MenuItem>
+                                                            </Select>
+                                                        </FormControl>
+                                                    </StyledTableCellBody>
+                                                    <StyledTableCellBody>
+                                                        <TextField
+                                                            multiline
+                                                            variant='standard'
+                                                            name='full_name'
+                                                            selected={values.details[i].full_name}
+                                                            onChange={e => handleDetailChange(e, i)}
+                                                            value={values.details[i].full_name}
+                                                            disabled={isDisabled}
+                                                            InputProps={{
+                                                                disableUnderline: true,
+                                                                style: {fontSize: 12}
+                                                            }}
+                                                        />
+                                                    </StyledTableCellBody>
+                                                    <StyledTableCellBody>
+                                                        <TextField
+                                                            multiline
+                                                            variant='standard'
+                                                            name='color'
+                                                            disabled={isDisabled}
+                                                            onChange={e => handleDetailChange(e, i)}
+                                                            value={values.details[i].color}
+                                                            InputProps={{
+                                                                disableUnderline: true,
+                                                                style: {fontSize: 12}
+                                                            }}
+                                                        />
+                                                    </StyledTableCellBody>
+                                                    <StyledTableCellBody>
+                                                        <FormSelect
+                                                            options={value.category === 'clothing' ? sizeClosesOptions : sizeShoesOptions}
                                                             defaultValue=""
                                                             SelectDisplayProps={{
                                                                 style: {
@@ -302,235 +389,162 @@ function OrderForm({
                                                                     justifyContent: 'center'
                                                                 }
                                                             }}
-                                                            variant='standard'
-                                                            labelId="demo-simple-select-label"
-                                                            id="demo-simple-select"
-                                                            value={values.details[i].category}
-                                                            name='category'
+                                                            value={values.details[i].size}
+                                                            name='size'
                                                             disableUnderline
-                                                            onChange={(e) => {
-                                                              // handleDetailChange(e, i)
-                                                                handleSelectReplaceChange(e, i, value)
-                                                            }}
+                                                            onChange={e => handleDetailChange(e, i)}
                                                             disabled={isDisabled}
-
-                                                        >
-                                                            <MenuItem
-                                                                style={{
-                                                                    fontSize: '14px',
-                                                                    justifyContent: 'center',
-                                                                }}
-                                                                divider={true}
-                                                                value={'clothing'}>
-                                                                Одяг
-                                                            </MenuItem>
-                                                            <MenuItem
-                                                                style={{
-                                                                    fontSize: '14px',
-                                                                    justifyContent: 'center',
-                                                                }}
-                                                                divider={true}
-                                                                value={'Взуття'}>
-                                                                Взуття
-                                                            </MenuItem>
-                                                            <MenuItem
-                                                                style={{
-                                                                    fontSize: '14px',
-                                                                    justifyContent: 'center',
-                                                                }}
-                                                                divider={true}
-                                                                value={'Інше'}>
-                                                                Інше
-                                                            </MenuItem>
-                                                        </Select>
-                                                    </FormControl>
-                                                </StyledTableCellBody>
-                                                <StyledTableCellBody>
-                                                    <TextField
-                                                        multiline
-                                                        variant='standard'
-                                                        name='full_name'
-                                                        selected={values.details[i].full_name}
-                                                        onChange={e => handleDetailChange(e, i)}
-                                                        value={values.details[i].full_name}
-                                                        disabled={isDisabled}
-                                                        InputProps={{
-                                                            disableUnderline: true,
-                                                            style: {fontSize: 12}
-                                                        }}
-                                                    />
-                                                </StyledTableCellBody>
-                                                <StyledTableCellBody>
-                                                    <TextField
-                                                        multiline
-                                                        variant='standard'
-                                                        name='color'
-                                                        disabled={isDisabled}
-                                                        onChange={e => handleDetailChange(e, i)}
-                                                        value={values.details[i].color}
-                                                        InputProps={{
-                                                            disableUnderline: true,
-                                                            style: {fontSize: 12}
-                                                        }}
-                                                    />
-                                                </StyledTableCellBody>
-                                                <StyledTableCellBody>
-                                                     <FormSelect
-                                                        options={selectValue === 'clothing'? sizeClosesOptions : sizeShoesOptions}
-                                                        defaultValue=""
-                                                        SelectDisplayProps={{
-                                                            style: {
-                                                                fontWeight: 600,
-                                                                display: 'flex',
-                                                                justifyContent: 'center'
-                                                            }
-                                                        }}
-                                                        value={values.details[i].size}
-                                                        name='size'
-                                                        disableUnderline
-                                                        onChange={e => handleDetailChange(e, i)}
-                                                        disabled={isDisabled}
-                                                    />
-                                                </StyledTableCellBody>
-                                                <StyledTableCellBody>
-                                                    <TextField
-                                                        type='number'
-                                                        variant='standard'
-                                                        name='amount'
-                                                        onChange={e => handleDetailChange(e, i)}
-                                                        value={values.details[i].amount}
-                                                        disabled={isDisabled}
-                                                        InputProps={{
-                                                            disableUnderline: true,
-                                                            style: {fontSize: 12}
-                                                        }}
-                                                        InputLabelProps={{
-                                                            shrink: true,
-                                                        }}
-                                                    />
-                                                </StyledTableCellBody>
-                                                <StyledTableCellBody>
-                                                    <TextField
-                                                        multiline
-                                                        variant='standard'
-                                                        name='link'
-                                                        onChange={e => handleDetailChange(e, i)}
-                                                        value={values.details[i].link}
-                                                        disabled={isDisabled}
-                                                        InputProps={{
-                                                            disableUnderline: true,
-                                                            style: {fontSize: 12},
-                                                        }}
-                                                    />
-                                                </StyledTableCellBody>
-                                                <StyledTableCellBody>
-                                                    <TextField
-                                                        multiline
-                                                        variant='standard'
-                                                        name='comment'
-                                                        onChange={e => handleDetailChange(e, i)}
-                                                        value={values.details[i].comment}
-                                                        disabled={isDisabled}
-                                                        InputProps={{
-                                                            disableUnderline: true,
-                                                            style: {fontSize: 12}
-                                                        }}
-                                                    />
-                                                </StyledTableCellBody>
-                                                <StyledTableCellBody>
-                                                    <CustomDateField
-                                                        name='term'
-                                                        onChange={e => handleDetailChange(e, i)}
-                                                        value={`До ${values.details[i].term}`}
-                                                        disabled={isDisabled}
-                                                        InputProps={{
-                                                            disableUnderline: true,
-                                                            style: {
-                                                                fontSize: 13,
-                                                                fontWeight: 600,
-                                                                padding: '5px'
-                                                            },
-                                                            sx: {"& .MuiSvgIcon-root": {color: "#5c7a77"}}
-                                                        }}
-                                                        renderInput={(params) => <TextField
-                                                            placeholder='До'
-                                                            name='term'
+                                                        />
+                                                    </StyledTableCellBody>
+                                                    <StyledTableCellBody style={{width: '50px'}}>
+                                                        <TextField
+                                                            type='number'
                                                             variant='standard'
-                                                            {...params}
-                                                        />}
-                                                    />
-                                                </StyledTableCellBody>
-                                                <StyledTableCellBody>
-                                                    <TextField
-                                                        multiline
-                                                        variant='standard'
-                                                        name='priority'
-                                                        onChange={e => handleDetailChange(e, i)}
-                                                        value={values.details[i].priority}
-                                                        disabled={isDisabled}
-                                                        InputProps={{
-                                                            disableUnderline: true,
-                                                            style: {
-                                                                // color:isDisabled ? 'red' :'green',
-                                                                fontSize: 12,
-                                                            }
-                                                        }}
-                                                    />
-                                                </StyledTableCellBody>
-                                                <StyledTableCellBody align='center' style={{display: 'flex'}}>
-                                                    <Tooltip title='Дублювати'>
-                                                        <IconButton
-                                                            variant='contained'
+                                                            name='amount'
+                                                            onChange={e => handleDetailChange(e, i)}
+                                                            value={values.details[i].amount}
                                                             disabled={isDisabled}
-                                                            style={{color: '#434746'}}
-                                                            onClick={() => {
-                                                                handleClone(value)
+                                                            InputProps={{
+                                                                disableUnderline: true,
+                                                                style: {fontSize: 12}
                                                             }}
-                                                        >
-                                                            <ContentCopyIcon style={{fontSize: 20}}/>
-                                                        </IconButton>
-                                                    </Tooltip>
-                                                    {i ?
-                                                        <Tooltip title='Видалити'>
-                                                            <IconButton variant='contained'
-                                                                        disabled={isDisabled}
-                                                                        color='error'
-                                                                        onClick={e => {
-                                                                            deleteDetail(e, i)
-                                                                        }}
+                                                            InputLabelProps={{
+                                                                shrink: true,
+                                                            }}
+                                                        />
+                                                    </StyledTableCellBody>
+                                                    <StyledTableCellBody style={{width: '220px'}}>
+                                                        <TextField
+                                                            fullWidth='true'
+                                                            multiline
+                                                            variant='standard'
+                                                            name='link'
+                                                            onChange={e => handleDetailChange(e, i)}
+                                                            value={values.details[i].link}
+                                                            disabled={isDisabled}
+                                                            InputProps={{
+                                                                disableUnderline: true,
+                                                                style: {fontSize: 12},
+                                                            }}
+                                                        />
+                                                    </StyledTableCellBody>
+                                                    <StyledTableCellBody style={{width: '300px'}}>
+                                                        <TextField
+                                                            fullWidth='true'
+                                                            multiline
+                                                            variant='standard'
+                                                            name='comment'
+                                                            onChange={e => handleDetailChange(e, i)}
+                                                            value={values.details[i].comment}
+                                                            disabled={isDisabled}
+                                                            InputProps={{
+                                                                disableUnderline: true,
+                                                                style: {fontSize: 12}
+                                                            }}
+                                                        />
+                                                    </StyledTableCellBody>
+                                                    <StyledTableCellBody style={{width: '150px'}}>
+                                                        <CustomDateField
+                                                            name='term'
+                                                            onChange={e => handleDetailChange(e, i)}
+                                                            value={`До ${values.details[i].term}`}
+                                                            disabled={isDisabled}
+                                                            InputProps={{
+                                                                disableUnderline: true,
+                                                                style: {
+                                                                    fontSize: 13,
+                                                                    fontWeight: 600,
+                                                                    padding: '5px'
+                                                                },
+                                                                sx: {"& .MuiSvgIcon-root": {color: "#5c7a77"}}
+                                                            }}
+                                                            renderInput={(params) => <TextField
+                                                                placeholder='До'
+                                                                name='term'
+                                                                variant='standard'
+                                                                {...params}
+                                                            />}
+                                                        />
+                                                    </StyledTableCellBody>
+                                                    <StyledTableCellBody style={{
+                                                        backgroundColor:
+                                                            value.priority === 'Висока' ? '#e11f2e'
+                                                                : value.priority === 'Помірна' ? '#f7e439'
+                                                                    : value.priority === 'Низька' ? '#27ce2b' : '#fff'
+                                                    }}>
+                                                        <FormSelect
+                                                            options={priorityOptions}
+                                                            defaultValue=""
+                                                            SelectDisplayProps={{
+                                                                style: {
+                                                                    fontWeight: 600,
+                                                                    display: 'flex',
+                                                                    justifyContent: 'center'
+                                                                }
+                                                            }}
+                                                            value={values.details[i].priority}
+                                                            name='priority'
+                                                            disableUnderline
+                                                            onChange={e => handleDetailChange(e, i)}
+                                                            disabled={isDisabled}
+                                                        />
+                                                        {console.log(value)}
+                                                    </StyledTableCellBody>
+                                                    <StyledTableCellBody align='center' style={{display: 'flex'}}>
+                                                        <Tooltip title='Дублювати'>
+                                                            <IconButton
+                                                                variant='contained'
+                                                                disabled={isDisabled}
+                                                                style={{color: '#434746'}}
+                                                                onClick={() => {
+                                                                    handleClone(value)
+                                                                }}
                                                             >
-                                                                <DeleteForeverIcon style={{fontSize: 20}}/>
+                                                                <ContentCopyIcon style={{fontSize: 20}}/>
                                                             </IconButton>
                                                         </Tooltip>
-                                                        :
-                                                        null}
-                                                </StyledTableCellBody>
-                                                {/*{*/}
-                                                {/*    branch.contacts.map((contact, j) => (*/}
-                                                {/*        <div style={{padding: '10px'}} key={j}>*/}
-                                                {/*            <span style={{fontSize: '18px'}}>Contact {j + 1}: </span>*/}
-                                                {/*            <TextField variant='standard' name='contact' placeholder='Contact'*/}
-                                                {/*                       onChange={e => handleContactChange(e, i, j)}*/}
-                                                {/*                       value={state.details[i].contacts[j]}*/}
-                                                {/*            />*/}
-                                                {/*            <IconButton variant='contained' color='error'*/}
-                                                {/*                        style={{marginLeft: '10px'}}*/}
-                                                {/*                        onClick={e => deleteContact(e, i, j)}*/}
-                                                {/*            ><DeleteForeverIcon style={{fontSize: 20}}/></IconButton>*/}
-                                                {/*        </div>*/}
+                                                        {i ?
+                                                            <Tooltip title='Видалити'>
+                                                                <IconButton variant='contained'
+                                                                            disabled={isDisabled}
+                                                                            color='error'
+                                                                            onClick={e => {
+                                                                                deleteDetail(e, i)
+                                                                            }}
+                                                                >
+                                                                    <DeleteForeverIcon style={{fontSize: 20}}/>
+                                                                </IconButton>
+                                                            </Tooltip>
+                                                            :
+                                                            null}
+                                                    </StyledTableCellBody>
+                                                    {/*{*/}
+                                                    {/*    branch.contacts.map((contact, j) => (*/}
+                                                    {/*        <div style={{padding: '10px'}} key={j}>*/}
+                                                    {/*            <span style={{fontSize: '18px'}}>Contact {j + 1}: </span>*/}
+                                                    {/*            <TextField variant='standard' name='contact' placeholder='Contact'*/}
+                                                    {/*                       onChange={e => handleContactChange(e, i, j)}*/}
+                                                    {/*                       value={state.details[i].contacts[j]}*/}
+                                                    {/*            />*/}
+                                                    {/*            <IconButton variant='contained' color='error'*/}
+                                                    {/*                        style={{marginLeft: '10px'}}*/}
+                                                    {/*                        onClick={e => deleteContact(e, i, j)}*/}
+                                                    {/*            ><DeleteForeverIcon style={{fontSize: 20}}/></IconButton>*/}
+                                                    {/*        </div>*/}
 
-                                                {/*    ))*/}
-                                                {/*}*/}
-                                                {/*<Button variant='outlined' color='primary'*/}
-                                                {/*        onClick={e => addContact(e, i)}>*/}
-                                                {/*    <AddIcon/>*/}
-                                                {/*    Додати</Button>*/}
+                                                    {/*    ))*/}
+                                                    {/*}*/}
+                                                    {/*<Button variant='outlined' color='primary'*/}
+                                                    {/*        onClick={e => addContact(e, i)}>*/}
+                                                    {/*    <AddIcon/>*/}
+                                                    {/*    Додати</Button>*/}
 
-                                            </StyledTableRow>
-                                        )
-                                    })}
-                                </TableBody>
-                            </StyledTable>
+                                                </StyledTableRow>
+                                            )
+                                        })}
+                                    </TableBody>
+                                </StyledTable>
+                            </TableContainer>
                         </div>
                     </Form>
                     <Grid

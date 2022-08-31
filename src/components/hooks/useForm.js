@@ -1,7 +1,7 @@
 import React, {useState} from 'react'
 
 
-export function useForm(initialValues, validateOnChange = false, validate, setSelectValue, selectValue) {
+export function useForm(initialValues, validateOnChange = false, validate) {
 
 
     const [values, setValues] = useState(initialValues);
@@ -21,14 +21,6 @@ export function useForm(initialValues, validateOnChange = false, validate, setSe
         setValues(temp)
 
     };
-    const handleSelectReplaceChange = (e, i) => {
-        let temp = {...values}
-        // let copy = {...item}
-        temp.details[i][e.target.name] = e.target.value
-        setSelectValue(temp.details[i][e.target.value] = e.target.value)
-        setValues(temp)
-    };
-
 
     const handleInputChange = e => {
         const {name, value} = e.target
@@ -54,8 +46,7 @@ export function useForm(initialValues, validateOnChange = false, validate, setSe
         handleInputChange,
         handleValuesChange,
         handleDetailChange,
-        handleSelectReplaceChange,
-        resetForm
+        resetForm,
     }
 }
 

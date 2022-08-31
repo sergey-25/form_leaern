@@ -17,13 +17,25 @@ import MoreVertIcon from "@mui/icons-material/MoreVert";
 import MenuIcon from '@mui/icons-material/Menu';
 import SearchIcon from '@mui/icons-material/Search';
 import FilterListIcon from '@mui/icons-material/FilterList';
-import {alpha, InputBase, Menu, MenuItem, Tooltip, AppBar, Toolbar, Box, Link, Button, CircularProgress} from "@mui/material";
+import {
+    alpha,
+    InputBase,
+    Menu,
+    MenuItem,
+    Tooltip,
+    AppBar,
+    Toolbar,
+    Box,
+    Link,
+    Button,
+    CircularProgress
+} from "@mui/material";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 import * as employeeService from "../../services/orderService";
 import moment from 'moment';
-import mySvg from '../../assets/images/img_nodatafound.svg'
+// import mySvg from '../../assets/images/img_nodatafound.svg'
 import ConfirmDialog from "../ConfirmDialog";
 import DeleteRecordButton from "../controls/DeleteRecordButton"
 
@@ -108,7 +120,8 @@ const StyledDetailsTableHeadRow = styled(TableRow)(({theme}) => ({
     border: '1px solid rgba(224, 224, 224, 1)',
 }));
 const StyledDetailsTableBodyCell = styled(TableCell)(({theme}) => ({
-    border: '1px solid rgba(224, 224, 224, 1)'
+    border: '1px solid rgba(224, 224, 224, 1)',
+    wordBreak: 'break-all'
 }));
 
 
@@ -288,31 +301,39 @@ function Row({
                                 </StyledDetailsTableHeadRow>
                             </TableHead>
                             <TableBody>
-                                {row.details.map((historyRow, i) => (
+                                {row.details.map((detail, i) => (
                                     <TableRow key={i} hover={true}>
                                         <StyledDetailsTableBodyCell>
                                             {i + 1}
                                         </StyledDetailsTableBodyCell>
                                         <StyledDetailsTableBodyCell>
-                                            {historyRow.category}
+                                            {detail.category}
                                         </StyledDetailsTableBodyCell>
-                                        <StyledDetailsTableBodyCell>{historyRow.full_name}</StyledDetailsTableBodyCell>
-                                        <StyledDetailsTableBodyCell>{historyRow.color}</StyledDetailsTableBodyCell>
-                                        <StyledDetailsTableBodyCell>{historyRow.size}</StyledDetailsTableBodyCell>
-                                        <StyledDetailsTableBodyCell>{historyRow.amount}</StyledDetailsTableBodyCell>
+                                        <StyledDetailsTableBodyCell>{detail.full_name}</StyledDetailsTableBodyCell>
+                                        <StyledDetailsTableBodyCell>{detail.color}</StyledDetailsTableBodyCell>
+                                        <StyledDetailsTableBodyCell>{detail.size}</StyledDetailsTableBodyCell>
+                                        <StyledDetailsTableBodyCell>{detail.amount}</StyledDetailsTableBodyCell>
                                         <StyledDetailsTableBodyCell>
                                             <Link
-                                                href={historyRow.link}
+                                                href={detail.link}
                                                 rel="noreferrer"
                                                 target="_blank"
                                                 underline="hover"
                                             >
-                                                {historyRow.link}
+                                                {detail.link}
                                             </Link>
                                         </StyledDetailsTableBodyCell>
-                                        <StyledDetailsTableBodyCell>{historyRow.comment}</StyledDetailsTableBodyCell>
-                                        <StyledDetailsTableBodyCell>{moment(historyRow.term).format("DD-MM-YYYY")}</StyledDetailsTableBodyCell>
-                                        <StyledDetailsTableBodyCell>{historyRow.priority}</StyledDetailsTableBodyCell>
+                                        <StyledDetailsTableBodyCell>{detail.comment}</StyledDetailsTableBodyCell>
+                                        <StyledDetailsTableBodyCell>{moment(detail.term).format("DD-MM-YYYY")}</StyledDetailsTableBodyCell>
+                                        <StyledDetailsTableBodyCell
+                                            style={{
+                                                backgroundColor:
+                                                    detail.priority === 'Висока' ? '#e11f2e'
+                                                        : detail.priority === 'Помірна' ? '#f7e439'
+                                                            : detail.priority === 'Низька' ? '#27ce2b' : '#fff'
+                                            }}>
+                                            {detail.priority}
+                                        </StyledDetailsTableBodyCell>
                                         {/*<TableCell align="right">*/}
                                         {/*    {Math.round(historyRow.amount * row.id * 100) / 100}*/}
                                         {/*</TableCell>*/}
@@ -388,7 +409,7 @@ export default function CollapsibleTable({
 
     useEffect(() => {
         if (isLoading) {
-           const timer = setTimeout(() => {
+            const timer = setTimeout(() => {
                 setIsLoading(false)
             }, 1500);
             return () => {
@@ -400,103 +421,103 @@ export default function CollapsibleTable({
 
     return (
         <Box>
-            {isLoading ? <CircularProgress />
-            :
-          <>
-              {/*    <Toolbar style={{backgroundColor: "#a4b9d6", minHeight: 0}}>*/}
-              {/*        <IconButton*/}
-              {/*            size="large"*/}
-              {/*            edge="start"*/}
-              {/*            aria-label="open drawer"*/}
-              {/*            sx={{mr: 2}}*/}
-              {/*        >*/}
-              {/*            <MenuIcon/>*/}
-              {/*        </IconButton>*/}
-              {/*        <Tooltip title="Фільтр">*/}
-              {/*            <IconButton>*/}
-              {/*                <FilterListIcon style={{fontSize: 30}}/>*/}
-              {/*            </IconButton>*/}
-              {/*        </Tooltip>*/}
-              {/*        /!*<Button onClick={()=>setOpenService(true)}>Послуги</Button>*!/*/}
-              {/*        <Typography*/}
-              {/*            variant="h6"*/}
-              {/*            noWrap*/}
-              {/*            component="div"*/}
-              {/*            sx={{*/}
-              {/*                flexGrow: 1, display: {*/}
-              {/*                    xs: 'none',*/}
-              {/*                    sm: 'block',*/}
-              {/*                    color: '#434746',*/}
-              {/*                    letterSpacing: '2px',*/}
-              {/*                    fontWeight: 'bold'*/}
-              {/*                }*/}
-              {/*            }}*/}
-              {/*        >*/}
-              {/*            Перелік замовлень*/}
-              {/*        </Typography>*/}
-              {/*        /!*<Search onChange={handleSearch}>*!/*/}
-              {/*        /!*    <SearchIconWrapper>*!/*/}
-              {/*        /!*        <SearchIcon/>*!/*/}
-              {/*        /!*    </SearchIconWrapper>*!/*/}
-              {/*        /!*    <StyledInputBase*!/*/}
-              {/*        /!*        placeholder="Пошук…"*!/*/}
-              {/*        /!*        inputProps={{'aria-label': 'search'}}*!/*/}
-              {/*        /!*    />*!/*/}
-              {/*        /!*</Search>*!/*/}
-              {/*    </Toolbar>*/}
-              {/*</AppBar>*/}
-              <Box m={2}>
-                  <TblContainer component={Paper} style={{marginBottom: '30px'}} gutterBottom>
+            {isLoading ? <CircularProgress/>
+                :
+                <>
+                    {/*    <Toolbar style={{backgroundColor: "#a4b9d6", minHeight: 0}}>*/}
+                    {/*        <IconButton*/}
+                    {/*            size="large"*/}
+                    {/*            edge="start"*/}
+                    {/*            aria-label="open drawer"*/}
+                    {/*            sx={{mr: 2}}*/}
+                    {/*        >*/}
+                    {/*            <MenuIcon/>*/}
+                    {/*        </IconButton>*/}
+                    {/*        <Tooltip title="Фільтр">*/}
+                    {/*            <IconButton>*/}
+                    {/*                <FilterListIcon style={{fontSize: 30}}/>*/}
+                    {/*            </IconButton>*/}
+                    {/*        </Tooltip>*/}
+                    {/*        /!*<Button onClick={()=>setOpenService(true)}>Послуги</Button>*!/*/}
+                    {/*        <Typography*/}
+                    {/*            variant="h6"*/}
+                    {/*            noWrap*/}
+                    {/*            component="div"*/}
+                    {/*            sx={{*/}
+                    {/*                flexGrow: 1, display: {*/}
+                    {/*                    xs: 'none',*/}
+                    {/*                    sm: 'block',*/}
+                    {/*                    color: '#434746',*/}
+                    {/*                    letterSpacing: '2px',*/}
+                    {/*                    fontWeight: 'bold'*/}
+                    {/*                }*/}
+                    {/*            }}*/}
+                    {/*        >*/}
+                    {/*            Перелік замовлень*/}
+                    {/*        </Typography>*/}
+                    {/*        /!*<Search onChange={handleSearch}>*!/*/}
+                    {/*        /!*    <SearchIconWrapper>*!/*/}
+                    {/*        /!*        <SearchIcon/>*!/*/}
+                    {/*        /!*    </SearchIconWrapper>*!/*/}
+                    {/*        /!*    <StyledInputBase*!/*/}
+                    {/*        /!*        placeholder="Пошук…"*!/*/}
+                    {/*        /!*        inputProps={{'aria-label': 'search'}}*!/*/}
+                    {/*        /!*    />*!/*/}
+                    {/*        /!*</Search>*!/*/}
+                    {/*    </Toolbar>*/}
+                    {/*</AppBar>*/}
+                    <Box m={2}>
+                        <TblContainer component={Paper} style={{marginBottom: '30px'}} gutterBottom>
 
-                      {/*<TableHead>*/}
-                      {/*    <StyledDetailsTableHeadRow>*/}
-                      {/*        <StyledDetailsTableHeadCell>№</StyledDetailsTableHeadCell>*/}
-                      {/*        <StyledDetailsTableHeadCell>Категорія</StyledDetailsTableHeadCell>*/}
-                      {/*        {records.map(f=> [...f.recipient].length) > 0 ?  <StyledDetailsTableHeadCell>Послуга</StyledDetailsTableHeadCell>*/}
-                      {/*            : null}*/}
-                      {/*    </StyledDetailsTableHeadRow>*/}
-                      {/*</TableHead>*/}
-                      <TblHead/>
+                            {/*<TableHead>*/}
+                            {/*    <StyledDetailsTableHeadRow>*/}
+                            {/*        <StyledDetailsTableHeadCell>№</StyledDetailsTableHeadCell>*/}
+                            {/*        <StyledDetailsTableHeadCell>Категорія</StyledDetailsTableHeadCell>*/}
+                            {/*        {records.map(f=> [...f.recipient].length) > 0 ?  <StyledDetailsTableHeadCell>Послуга</StyledDetailsTableHeadCell>*/}
+                            {/*            : null}*/}
+                            {/*    </StyledDetailsTableHeadRow>*/}
+                            {/*</TableHead>*/}
+                            <TblHead/>
 
-                      {records.length ? <TableBody>
-                              {recordsAfterPagingAndSorting().map((row, i) => (
+                            {records.length ? <TableBody>
+                                    {recordsAfterPagingAndSorting().map((row, i) => (
 
-                                  <Row key={i}
-                                       row={row}
-                                       setOpenForm={setOpenForm}
-                                      // setOpenService={setOpenService}
-                                       setRecords={setRecords}
-                                       setRecordForEdit={setRecordForEdit}
-                                       setIsDisabled={setIsDisabled}
-                                       setNotify={setNotify}
-                                       confirmDialog={confirmDialog}
-                                       setConfirmDialog={setConfirmDialog}
+                                        <Row key={i}
+                                             row={row}
+                                             setOpenForm={setOpenForm}
+                                            // setOpenService={setOpenService}
+                                             setRecords={setRecords}
+                                             setRecordForEdit={setRecordForEdit}
+                                             setIsDisabled={setIsDisabled}
+                                             setNotify={setNotify}
+                                             confirmDialog={confirmDialog}
+                                             setConfirmDialog={setConfirmDialog}
 
-                                  />
+                                        />
 
-                              ))}
-                          </TableBody>
-                          : null
-                      }
-                  </TblContainer>
-                  {!records.length ?
-                      <div style={{
-                          display: 'block',
-                          padding: '100px'
-                      }}>
-                          <img
-                              style={{widht: '301px', height: '227px'}}
-                              src={mySvg}
-                              alt={'empty list'}/>
-                      </div>
-                      : null}
+                                    ))}
+                                </TableBody>
+                                : null
+                            }
+                        </TblContainer>
+                        {/*{!records.length ?*/}
+                        {/*    <div style={{*/}
+                        {/*        display: 'block',*/}
+                        {/*        padding: '100px'*/}
+                        {/*    }}>*/}
+                        {/*        <img*/}
+                        {/*            style={{widht: '301px', height: '227px'}}*/}
+                        {/*            src={mySvg}*/}
+                        {/*            alt={'empty list'}/>*/}
+                        {/*    </div>*/}
+                        {/*    : null}*/}
 
-              </Box>
-              <ConfirmDialog
-                  confirmDialog={confirmDialog}
-                  setConfirmDialog={setConfirmDialog}
-              />
-          </>
+                    </Box>
+                    <ConfirmDialog
+                        confirmDialog={confirmDialog}
+                        setConfirmDialog={setConfirmDialog}
+                    />
+                </>
             }
 
         </Box>
