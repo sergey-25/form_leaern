@@ -1,28 +1,61 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {AppBar, Box, Dialog, Fab, Toolbar, Typography} from "@mui/material";
 import ServiceForm from "./ServiceForm";
 import ServicesList from "./ServicesList";
 import AddIcon from "@mui/icons-material/Add";
+import * as servicesService from "../../services/servicesService";
+import Notification from "../Notification";
 
 
 const initialValues = {
     id: 0,
-    date: '',
-    contact: '',
+    date: new Date(),
     category: '',
     full_name: '',
     service: '',
-    term: '',
+    term: new Date(),
     priority: '',
     status: '',
-    status_comment: ''
+    status_comment: '',
+    contacts: [
+        {
+            name: '',
+            phone_number: '',
+            address: ''
+        }
+    ]
 };
 
-function ServicesComponent({serviceRecords, setServiceRecords}) {
+function ServicesComponent({
+                               serviceRecords,
+                               setServiceRecords,
+                               filterFn,
+                               setFilterFn,
+                               notify,
+                               setNotify
+                           }) {
+
+
     const [openService, setOpenService] = React.useState(false);
-    // const [serviceRecords, setServiceRecords] = React.useState(false);
+    const [serviceRecordForEdit, setServiceRecordForEdit] = useState(null);
+    const [isDisabled, setIsDisabled] = useState(false);
 
 
+    const addOrEdit = (service, resetForm) => {
+        if (service.id === 0)
+            servicesService.insertService(service)
+        else
+            servicesService.updateService(service)
+        resetForm()
+        setServiceRecordForEdit(null)
+        setOpenService(false)
+        setServiceRecords(servicesService.getAllServices())
+        setNotify({
+            isOpen: true,
+            message: 'Збережено',
+            type: 'success'
+        })
+    };
     return (
         <>
             <Box>
@@ -34,7 +67,7 @@ function ServicesComponent({serviceRecords, setServiceRecords}) {
                     aria-label="add"
                     onClick={() => {
                         setOpenService(true)
-                        // setRecordForEdit(null);
+                        setServiceRecordForEdit(null);
                     }}
                     sx={{
                         position: 'fixed',
@@ -48,34 +81,68 @@ function ServicesComponent({serviceRecords, setServiceRecords}) {
                     open={openService}
                     maxWidth='lg'
                     fullWidth
-                    // TransitionComponent={Transition}
                 >
                     <AppBar
                         style={{backgroundColor: "#434746"}}
                         sx={{marginBottom: '10px', position: 'relative'}}>
                         <Toolbar>
-                            {/*{!recordForEdit ?*/}
-                            {/*    <Typography sx={{ml: 2, flex: 1, color: '#000', letterSpacing: '2px'}}*/}
-                            {/*                variant="h6"*/}
-                            {/*                component="div">*/}
-                            {/*        Нова заявка*/}
-                            {/*    </Typography>*/}
-                            {/*    :*/}
-                            {/*    <Typography sx={{ml: 2, flex: 1, color: '#000', letterSpacing: '2px'}}*/}
-                            {/*                variant="h6"*/}
-                            {/*                component="div">*/}
-                            {/*        Редагувати заявку*/}
-                            {/*    </Typography>}*/}
+                            {!serviceRecordForEdit ?
+                                <Typography sx={{
+                                    ml: 2, flex: 1, color: '#a4b9d6',
+                                    fontWeight: 'bold',
+                                    letterSpacing: '2px'
+                                }}
+                                            variant="h6"
+                                            component="div">
+                                    Нове замовлення
+                                </Typography>
+                                :
+                                !isDisabled ?
+                                    <Typography sx={{
+                                        ml: 2, flex: 1, color: '#a4b9d6',
+                                        fontWeight: 'bold',
+                                        letterSpacing: '2px'
+                                    }}
+                                                variant="h6"
+                                                component="div">
+                                        Редагувати замовлення
+                                    </Typography>
+                                    :
+                                    <Typography sx={{
+                                        ml: 2, flex: 1, color: '#a4b9d6',
+                                        fontWeight: 'bold',
+                                        letterSpacing: '2px'
+                                    }}
+                                                variant="h6"
+                                                component="div">
+                                        Перегляд замовлення
+                                    </Typography>
+                            }
                         </Toolbar>
                     </AppBar>
                     <ServiceForm
                         setOpenService={setOpenService}
                         initialValues={initialValues}
+                        serviceRecordForEdit={serviceRecordForEdit}
+                        setServiceRecordForEdit={setServiceRecordForEdit}
+                        addOrEdit={addOrEdit}
+                        isDisabled={isDisabled}
+                        setIsDisabled={setIsDisabled}
                     />
                 </Dialog>
                 <ServicesList
-                serviceRecords={serviceRecords}
-                setServiceRecords={setServiceRecords}
+                    setOpenService={setOpenService}
+                    serviceRecords={serviceRecords}
+                    setServiceRecords={setServiceRecords}
+                    serviceRecordForEdit={serviceRecordForEdit}
+                    setServiceRecordForEdit={setServiceRecordForEdit}
+                    setIsDisabled={setIsDisabled}
+                    filterFn={filterFn}
+                    setFilterFn={setFilterFn}
+                />
+                <Notification
+                    notify={notify}
+                    setNotify={setNotify}
                 />
             </Box>
         </>

@@ -21,6 +21,11 @@ export function useForm(initialValues, validateOnChange = false, validate) {
         setValues(temp)
 
     };
+    const handleContactChange = (e, i) => {
+        let temp = {...values}
+        temp.contacts[i][e.target.name] = e.target.value
+        setValues(temp)
+    };
 
     const handleInputChange = e => {
         const {name, value} = e.target
@@ -46,6 +51,7 @@ export function useForm(initialValues, validateOnChange = false, validate) {
         handleInputChange,
         handleValuesChange,
         handleDetailChange,
+        handleContactChange,
         resetForm,
     }
 }

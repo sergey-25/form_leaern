@@ -11,8 +11,9 @@ import {Grid, Typography} from "@mui/material";
 import * as orderService from "../services/orderService";
 import * as servicesService from "../services/servicesService";
 import SearchIcon from "@mui/icons-material/Search";
-import {Search, SearchIconWrapper, StyledInputBase} from "./OrdersComponent/List";
+import {Search, SearchIconWrapper, StyledInputBase} from "../styles/Search.styled";
 import SortingMenu from "./SortingMenu";
+import {useState} from "react";
 
 const initialValues = {
     id: 0,
@@ -59,6 +60,8 @@ export default function AmountComponent() {
             return items;
         }
     });
+
+    const [notify, setNotify] = useState({isOpen: false, message: '', type: ''});
 
     const handleChange = (event, newValue) => {
         setValue(newValue);
@@ -116,8 +119,6 @@ export default function AmountComponent() {
             </div>
         )
     };
-    const sortedActivities = records.slice().sort((a, b) => b.date - a.date)
-    console.log(sortedActivities)
 
     return (
         <Box sx={{width: '100%', typography: 'body1'}}>
@@ -202,15 +203,18 @@ export default function AmountComponent() {
                         setRecords={setRecords}
                         filterFn={filterFn}
                         setFilterFn={setFilterFn}
-
+                        notify={notify}
+                        setNotify={setNotify}
                     />
                 </TabPanel>
                 <TabPanel value="2" sx={{padding: 0}}>
                     <ServicesComponent
-                        // records={records}
-                        // setRecords={setRecords}
                         serviceRecords={serviceRecords}
                         setServiceRecords={setServiceRecords}
+                        filterFn={filterFn}
+                        setFilterFn={setFilterFn}
+                        notify={notify}
+                        setNotify={setNotify}
                     />
                 </TabPanel>
             </TabContext>

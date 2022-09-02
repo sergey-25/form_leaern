@@ -1,42 +1,15 @@
 import React, {useState} from 'react';
-import {styled} from '@mui/material/styles';
 import {
-    Table,
     TableHead,
     TableRow,
-    TableCell,
     TablePagination,
     TableSortLabel,
-    Paper,
+    TableContainer
 } from '@mui/material'
-import TableContainer from '@mui/material/TableContainer';
+import {StyledPaper, StyledTable, StyledTableHeadCell} from "../../styles/Table.styled";
 
 
-export const StyledPaper = styled(Paper)(({theme}) => ({
-    border: '2px solid rgba(224, 224, 224, 1)',
-}));
 
-
-const StyledTable = styled(Table)(({theme}) => ({
-    borderCollapse: 'collapse'
-}));
-
-const StyledTableHeadCell = styled(TableCell)(({theme}) => ({
-    fontSize: '15px',
-    fontWeight: '700',
-    padding: '10px',
-    borderLeft: '1px solid rgba(224, 224, 224, 1)',
-    borderRight: '1px solid rgba(224, 224, 224, 1)',
-    borderBottom: '1px solid rgba(224, 224, 224, 1)',
-    backgroundColor: theme.palette.action.hover,
-
-    '&:first-of-type': {
-        padding: 0
-    },
-    '&:last-of-type': {
-        padding: 0
-    },
-}));
 
 
 export default function useTable(records, headCells, filterFn, serviceRecords) {
@@ -140,7 +113,7 @@ export default function useTable(records, headCells, filterFn, serviceRecords) {
             return stableSort(filterFn.fn(records), getComparator(order, orderBy))
         } else
             return stableSort(filterFn.fn(serviceRecords), getComparator(order, orderBy))
-            (console.log('dsdsds'))
+
 
         // .slice(page * rowsPerPage, (page + 1) * rowsPerPage)
 

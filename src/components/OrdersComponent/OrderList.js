@@ -1,25 +1,11 @@
 import React, {useState, useEffect} from 'react';
-import {styled} from '@mui/material/styles';
 import PropTypes from 'prop-types';
-import Collapse from '@mui/material/Collapse';
 import IconButton from '@mui/material/IconButton';
-import Table from '@mui/material/Table';
-import TableBody from '@mui/material/TableBody';
-import TableCell from '@mui/material/TableCell';
-import TableHead from '@mui/material/TableHead';
-import TableRow from '@mui/material/TableRow';
-import Typography from '@mui/material/Typography';
-import Paper from '@mui/material/Paper';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import useTable from "../hooks/useTable";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
-import MenuIcon from '@mui/icons-material/Menu';
-import SearchIcon from '@mui/icons-material/Search';
-import FilterListIcon from '@mui/icons-material/FilterList';
 import {
-    alpha,
-    InputBase,
     Menu,
     MenuItem,
     Tooltip,
@@ -27,102 +13,37 @@ import {
     Toolbar,
     Box,
     Link,
-    Button,
-    CircularProgress
+    Button, Paper, Typography, TableRow, TableHead, TableCell, TableBody, Collapse,
+    CircularProgress, Grid
 } from "@mui/material";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 import * as employeeService from "../../services/orderService";
 import moment from 'moment';
+import highPriorityIcon from '../../assets/svg/high-priority_1.svg'
+import mediumPriorityIcon from '../../assets/svg/medium-priority_1.svg'
+import lowPriorityIcon from '../../assets/svg/low-priority_2.svg'
 // import mySvg from '../../assets/images/img_nodatafound.svg'
 import ConfirmDialog from "../ConfirmDialog";
 import DeleteRecordButton from "../controls/DeleteRecordButton"
+import {
+    StyledDetailsTable, StyledDetailsTableBodyCell,
+    StyledDetailsTableHeadCell,
+    StyledDetailsTableHeadRow,
+    StyledTableBodyCell
+} from "../../styles/Table.styled";
 
 
 const headCells = [
     {id: '', label: '', disableSorting: true},
     {id: 'index', label: '№'},
     {id: 'address', label: 'Адреса'},
-    {id: 'hireDate', label: 'Одержувач'},
+    {id: 'recipient', label: 'Одержувач'},
     {id: 'comment', label: 'Коментар'},
     {id: 'date', label: 'Дата подачі'},
     {id: 'actions', label: 'Дії', disableSorting: true}
 ];
-
-
-export const Search = styled('div')(({theme}) => ({
-    position: 'relative',
-    borderRadius: theme.shape.borderRadius,
-    backgroundColor: alpha(theme.palette.common.white, 0.15),
-    '&:hover': {
-        backgroundColor: alpha(theme.palette.common.white, 0.25),
-    },
-    marginLeft: 0,
-    width: '100%',
-    [theme.breakpoints.up('sm')]: {
-        marginLeft: theme.spacing(1),
-        width: 'auto',
-    },
-}));
-
-export const SearchIconWrapper = styled('div')(({theme}) => ({
-    padding: theme.spacing(0, 2),
-    height: '100%',
-    color: '#434746',
-    position: 'absolute',
-    pointerEvents: 'none',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-}));
-
-export const StyledInputBase = styled(InputBase)(({theme}) => ({
-    color: '#434746',
-    '& .MuiInputBase-input': {
-        padding: theme.spacing(1, 1, 1, 0),
-        // vertical padding + font size from searchIcon
-        paddingLeft: `calc(1em + ${theme.spacing(4)})`,
-        transition: theme.transitions.create('width'),
-        width: '100%',
-        [theme.breakpoints.up('sm')]: {
-            width: '12ch',
-            '&:focus': {
-                width: '20ch',
-            },
-        },
-    },
-}));
-
-
-const StyledTableBodyCell = styled(TableCell)(({theme}) => ({
-    border: '1px solid rgba(224, 224, 224, 1)',
-    '&:first-of-type': {
-        padding: 0
-    },
-    '&:last-of-type': {
-        padding: 0
-    }, borderCollapse: 'separate'
-}));
-const StyledDetailsTable = styled(Table)(({theme}) => ({
-    border: '1px solid rgba(224, 224, 224, 1)',
-    '& tbody tr td': {
-        border: '1px solid rgba(224, 224, 224, 1)',
-    }
-}));
-const StyledDetailsTableHeadCell = styled(TableCell)(({theme}) => ({
-    border: '1px solid rgba(224, 224, 224, 1)',
-    fontSize: '15px',
-    fontWeight: '700',
-    backgroundColor: theme.palette.action.hover,
-}));
-const StyledDetailsTableHeadRow = styled(TableRow)(({theme}) => ({
-    border: '1px solid rgba(224, 224, 224, 1)',
-}));
-const StyledDetailsTableBodyCell = styled(TableCell)(({theme}) => ({
-    border: '1px solid rgba(224, 224, 224, 1)',
-    wordBreak: 'break-all'
-}));
 
 
 function Row({
@@ -154,7 +75,7 @@ function Row({
         setIsDisabled(true)
         setRecordForEdit(item)
         setOpenForm(true)
-    }
+    };
 
     const handleEdit = item => {
         setRecordForEdit(item)
@@ -186,6 +107,7 @@ function Row({
                     >
                         {open ? <KeyboardArrowUpIcon/> : <KeyboardArrowDownIcon/>}
                     </IconButton>
+                    {/*<p>{row.details.length}</p>*/}
                 </StyledTableBodyCell>
                 <StyledTableBodyCell align='center' component="th" scope="row" style={{width: 0}}>
                     {row.id}
@@ -194,7 +116,9 @@ function Row({
                 <StyledTableBodyCell>{row.recipient}</StyledTableBodyCell>
                 <StyledTableBodyCell>{row.comment}</StyledTableBodyCell>
                 <StyledTableBodyCell
-                    style={{width: '75px'}}>{moment(row.date).format("DD-MM-YYYY")}</StyledTableBodyCell>
+                    style={{width: '75px'}}>
+                    {moment(row.date).format("DD-MM-YYYY")}
+                </StyledTableBodyCell>
                 <StyledTableBodyCell align='center'>
                     <IconButton
                         style={{color: '#434746'}}
@@ -296,8 +220,6 @@ function Row({
                                     <StyledDetailsTableHeadCell>Коментар</StyledDetailsTableHeadCell>
                                     <StyledDetailsTableHeadCell>Термін</StyledDetailsTableHeadCell>
                                     <StyledDetailsTableHeadCell>Важливість</StyledDetailsTableHeadCell>
-                                    {/*<TableCell align="right">Amount</TableCell>*/}
-                                    {/*<TableCell align="right">Total price ($)</TableCell>*/}
                                 </StyledDetailsTableHeadRow>
                             </TableHead>
                             <TableBody>
@@ -309,10 +231,18 @@ function Row({
                                         <StyledDetailsTableBodyCell>
                                             {detail.category}
                                         </StyledDetailsTableBodyCell>
-                                        <StyledDetailsTableBodyCell>{detail.full_name}</StyledDetailsTableBodyCell>
-                                        <StyledDetailsTableBodyCell>{detail.color}</StyledDetailsTableBodyCell>
-                                        <StyledDetailsTableBodyCell>{detail.size}</StyledDetailsTableBodyCell>
-                                        <StyledDetailsTableBodyCell>{detail.amount}</StyledDetailsTableBodyCell>
+                                        <StyledDetailsTableBodyCell>
+                                            {detail.full_name}
+                                        </StyledDetailsTableBodyCell>
+                                        <StyledDetailsTableBodyCell>
+                                            {detail.color}
+                                        </StyledDetailsTableBodyCell>
+                                        <StyledDetailsTableBodyCell>
+                                            {detail.size}
+                                        </StyledDetailsTableBodyCell>
+                                        <StyledDetailsTableBodyCell>
+                                            {detail.amount}
+                                        </StyledDetailsTableBodyCell>
                                         <StyledDetailsTableBodyCell>
                                             <Link
                                                 href={detail.link}
@@ -323,20 +253,37 @@ function Row({
                                                 {detail.link}
                                             </Link>
                                         </StyledDetailsTableBodyCell>
-                                        <StyledDetailsTableBodyCell>{detail.comment}</StyledDetailsTableBodyCell>
-                                        <StyledDetailsTableBodyCell>{moment(detail.term).format("DD-MM-YYYY")}</StyledDetailsTableBodyCell>
-                                        <StyledDetailsTableBodyCell
-                                            style={{
-                                                backgroundColor:
-                                                    detail.priority === 'Висока' ? '#e11f2e'
-                                                        : detail.priority === 'Помірна' ? '#f7e439'
-                                                            : detail.priority === 'Низька' ? '#27ce2b' : '#fff'
-                                            }}>
-                                            {detail.priority}
+                                        <StyledDetailsTableBodyCell>
+                                            {detail.comment}
                                         </StyledDetailsTableBodyCell>
-                                        {/*<TableCell align="right">*/}
-                                        {/*    {Math.round(historyRow.amount * row.id * 100) / 100}*/}
-                                        {/*</TableCell>*/}
+                                        <StyledDetailsTableBodyCell>
+                                            {moment(detail.term).format("DD-MM-YYYY")}
+                                        </StyledDetailsTableBodyCell>
+                                        <StyledDetailsTableBodyCell>
+                                            <Grid container>
+                                                <Grid item>
+                                                    <p>{detail.priority}</p>
+                                                </Grid>
+                                                <Grid item>
+                                                    {detail.priority === 'Висока' ?
+                                                        <img
+                                                            style={{width: '24px', height: '24px'}}
+                                                            src={highPriorityIcon}
+                                                            alt={'high priority'}/>
+                                                        : detail.priority === 'Помірна' ?
+                                                            <img
+                                                                style={{width: '24px', height: '24px'}}
+                                                                src={mediumPriorityIcon}
+                                                                alt={'medium priority'}/>
+                                                            : detail.priority === 'Низька' ?
+                                                                <img
+                                                                    style={{width: '24px', height: '24px'}}
+                                                                    src={lowPriorityIcon}
+                                                                    alt={'low priority'}/> : null
+                                                    }
+                                                </Grid>
+                                            </Grid>
+                                        </StyledDetailsTableBodyCell>
                                     </TableRow>
                                 ))}
                             </TableBody>
@@ -346,40 +293,20 @@ function Row({
             </TableRow>
         </React.Fragment>
     );
-}
+};
 
-// Row.propTypes = {
-//     row: PropTypes.shape({
-//         calories: PropTypes.number.isRequired,
-//         carbs: PropTypes.number.isRequired,
-//         fat: PropTypes.number.isRequired,
-//         history: PropTypes.arrayOf(
-//             PropTypes.shape({
-//                 amount: PropTypes.number.isRequired,
-//                 customerId: PropTypes.string.isRequired,
-//                 date: PropTypes.string.isRequired,
-//             }),
-//         ).isRequired,
-//         name: PropTypes.string.isRequired,
-//         price: PropTypes.number.isRequired,
-//         protein: PropTypes.number.isRequired,
-//     }).isRequired,
-// };
-
-
-export default function CollapsibleTable({
-                                             isLoading,
-                                             setIsLoading,
-                                             setOpenForm,
-                                             // setOpenService,
-                                             setRecordForEdit,
-                                             setIsDisabled,
-                                             records,
-                                             setRecords,
-                                             setNotify,
-                                             confirmDialog,
-                                             setConfirmDialog, filterFn, setFilterFn
-                                         }) {
+export default function OrderList({
+                                      isLoading,
+                                      setIsLoading,
+                                      setOpenForm,
+                                      setRecordForEdit,
+                                      setIsDisabled,
+                                      records,
+                                      setRecords,
+                                      setNotify,
+                                      confirmDialog,
+                                      setConfirmDialog, filterFn
+                                  }) {
     // const [filterFn, setFilterFn] = useState({
     //     fn: items => {
     //         return items;
@@ -468,18 +395,10 @@ export default function CollapsibleTable({
                     {/*</AppBar>*/}
                     <Box m={2}>
                         <TblContainer component={Paper} style={{marginBottom: '30px'}} gutterBottom>
-
-                            {/*<TableHead>*/}
-                            {/*    <StyledDetailsTableHeadRow>*/}
-                            {/*        <StyledDetailsTableHeadCell>№</StyledDetailsTableHeadCell>*/}
-                            {/*        <StyledDetailsTableHeadCell>Категорія</StyledDetailsTableHeadCell>*/}
-                            {/*        {records.map(f=> [...f.recipient].length) > 0 ?  <StyledDetailsTableHeadCell>Послуга</StyledDetailsTableHeadCell>*/}
-                            {/*            : null}*/}
-                            {/*    </StyledDetailsTableHeadRow>*/}
-                            {/*</TableHead>*/}
                             <TblHead/>
 
-                            {records.length ? <TableBody>
+                            {records.length ?
+                                <TableBody>
                                     {recordsAfterPagingAndSorting().map((row, i) => (
 
                                         <Row key={i}
@@ -506,7 +425,7 @@ export default function CollapsibleTable({
                         {/*        padding: '100px'*/}
                         {/*    }}>*/}
                         {/*        <img*/}
-                        {/*            style={{widht: '301px', height: '227px'}}*/}
+                        {/*            style={{width: '301px', height: '227px'}}*/}
                         {/*            src={mySvg}*/}
                         {/*            alt={'empty list'}/>*/}
                         {/*    </div>*/}

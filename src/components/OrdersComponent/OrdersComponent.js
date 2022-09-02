@@ -1,14 +1,11 @@
 import React, {useState} from 'react';
 import * as employeeService from "../../services/orderService";
 import OrderForm from "./orderForm/OrderForm";
-import List from "./List";
+import OrderList from "./OrderList";
 import Notification from "../Notification";
 import {AppBar, Box, Dialog, Fab, Slide, Toolbar, Typography, Tooltip, IconButton} from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import PrintOutlinedIcon from '@mui/icons-material/PrintOutlined';
-import {styled} from '@mui/material/styles';
-import * as servicesService from "../../services/servicesService";
-import ServiceForm from "../ServicesComponent/ServiceForm";
 
 
 const initialValues = {
@@ -48,20 +45,14 @@ const initialValues = {
 const Transition = React.forwardRef(function Transition(props, ref) {
     return (<Slide direction="up" ref={ref} {...props} />);
 });
-// export const StyledTypography= styled(Typography)(({theme}) => ({
-//     variant="h6"
-//     component="div"
-// }));
 
 
-function OrdersComponent({records, setRecords, filterFn, setFilterFn}) {
+function OrdersComponent({records, setRecords, filterFn, setFilterFn, notify, setNotify}) {
 
     const [openForm, setOpenForm] = useState(false);
     const [isLoading, setIsLoading] = useState(true);
-    // const [openService, setOpenService] = React.useState(false);
     const [recordForEdit, setRecordForEdit] = useState(null);
     const [isDisabled, setIsDisabled] = useState(false);
-    const [notify, setNotify] = useState({isOpen: false, message: '', type: ''});
     const [confirmDialog, setConfirmDialog] = useState({isOpen: false, title: '', subTitle: ''});
 
 
@@ -162,14 +153,7 @@ function OrdersComponent({records, setRecords, filterFn, setFilterFn}) {
                         addOrEdit={addOrEdit}
                     />
                 </Dialog>
-                {/*<Dialog*/}
-                {/*open={openService}*/}
-                {/*fullScreen*/}
-                {/*TransitionComponent={Transition}*/}
-                {/*>*/}
-                {/*    <ServiceForm setOpenService={setOpenService}/>*/}
-                {/*</Dialog>*/}
-                <List
+                <OrderList
                     isLoading={isLoading}
                     setIsLoading={setIsLoading}
                     setOpenForm={setOpenForm}
