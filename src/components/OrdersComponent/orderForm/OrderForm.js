@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react';
+import React, {forwardRef, useEffect} from 'react';
 import {useForm, Form} from '../../hooks/useForm';
 
 
@@ -58,8 +58,14 @@ const priorityOptions = [
 
 
 function OrderForm({
-                       setOpenForm, initialValues, addOrEdit, recordForEdit, isDisabled,
-                       setIsDisabled, setIsLoading
+                       componentRef,
+                       setOpenForm,
+                       initialValues,
+                       addOrEdit,
+                       recordForEdit,
+                       isDisabled,
+                       setIsDisabled,
+                       setIsLoading,
                    }) {
 
     // const [anchorEl, setAnchorEl] = useState(false);
@@ -158,7 +164,7 @@ function OrderForm({
     );
 
 
-    const handleClone = (item, i) => {
+    const handleClone = (item) => {
         let cloneValues = {...values}
         let copyCurrentValue = {...item}
         cloneValues.details.push(copyCurrentValue)
@@ -191,12 +197,11 @@ function OrderForm({
         }
     };
 
-
     return (
         <div>
             <Container maxWidth='false'>
                 <div>
-                    <Form>
+                    <Form ref={componentRef}>
                         <Grid container
                               xs={12} md={6} l={3}
                               direction='column'>
@@ -233,7 +238,7 @@ function OrderForm({
                         <br/>
                         <div>
                             <TableContainer style={{overflowX: 'auto'}} component={StyledFormPaper}>
-                                <StyledTable>
+                                <StyledTable id="my-table">
                                     <StyledTableHead>
                                         <TableRow>
                                             <StyledTableCellHead>Категорія</StyledTableCellHead>
@@ -588,4 +593,4 @@ function OrderForm({
     );
 }
 
-export default OrderForm;
+export default forwardRef(OrderForm);

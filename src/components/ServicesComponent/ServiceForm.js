@@ -261,10 +261,52 @@ function ServiceForm({
                         </TableContainer>
                     </div>
                 </Form>
-                <Button onClick={handleSubmit}>Подати</Button>
-                <Button onClick={handleCloseForm}>
-                    Скасувати
-                </Button>
+                <Grid
+                    container
+                    direction='row'
+                    mt={4}
+                    spacing={2}
+                    justifyContent="flex-end">
+                    <Grid item>
+                        <Button
+                            mr={2}
+                            variant='outlined'
+                            size='medium'
+                            onClick={handleSubmit}
+                            sx={{
+                                borderColor: '#434746',
+                                color: '#434746',
+                                letterSpacing: '3px',
+                                fontSize: '13px',
+                                fontWeight: 'bold',
+                                '&:hover': {
+                                    borderColor: '#a4b9d6',
+                                    backgroundColor: '#ebeff6',
+                                }
+                            }}
+                        >
+                            {!serviceRecordForEdit ? 'Подати' : 'Зберегти'}
+                        </Button>
+
+                    </Grid>
+                    <Grid item>
+                        <Button
+                            variant='outlined'
+                            size='medium'
+                            color='error'
+                            onClick={handleCloseForm}
+                            sx={{
+                                letterSpacing: '3px',
+                                fontSize: '13px',
+                                fontWeight: 'bold',
+                                borderColor: '#d32f2f',
+                                '&:hover': {}
+                            }}
+                        >
+                            Скасувати
+                        </Button>
+                    </Grid>
+                </Grid>
             </Box>
         </div>
     );

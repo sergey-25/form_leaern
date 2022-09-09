@@ -12,7 +12,7 @@ import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 import highPriorityIcon from "../../assets/svg/high-priority_1.svg";
 import mediumPriorityIcon from "../../assets/svg/medium-priority_1.svg";
 import lowPriorityIcon from "../../assets/svg/low-priority_2.svg";
-import PriorityHighRoundedIcon from '@mui/icons-material/PriorityHighRounded';
+import ConfirmDialog from "../ConfirmDialog";
 
 
 const headCells = [
@@ -34,7 +34,10 @@ function Row({
                  setOpenService,
                  setServiceRecords,
                  setServiceRecordForEdit,
-                 setIsDisabled
+                 setIsDisabled,
+                 setNotify,
+                 setConfirmService,
+                 confirmService
              }) {
 
     const [open, setOpen] = React.useState(false);
@@ -64,18 +67,18 @@ function Row({
 
 
     const onDelete = id => {
-        // setConfirmDialog({
-        //     ...confirmDialog,
-        //     isOpen: false
-        // })
+        setConfirmService({
+            ...confirmService,
+            isOpen: false
+        })
         servicesService.deleteService(id);
         setServiceRecords(servicesService.getAllServices())
-        // setNotify({
-        //     isOpen: true,
-        //     message: 'Успішно видалили',
-        //     type: 'error'
-        // })
-    }
+        setNotify({
+            isOpen: true,
+            message: 'Успішно видалили',
+            type: 'error'
+        })
+    };
 
     return (
         <React.Fragment>
@@ -121,9 +124,9 @@ function Row({
                 {row.contacts.map((contact, j) => (
                     <StyledTableBodyCell key={j}>
                         <p> {contact.name}</p>
-                        <Divider/>
+                        {contact.name && <Divider/>}
                         <p>{contact.phone_number}</p>
-                        <Divider/>
+                        {contact.phone_number && <Divider/>}
                         <p>{contact.address}</p>
                     </StyledTableBodyCell>
                 ))}
@@ -195,14 +198,14 @@ function Row({
                                 <IconButton
                                     color='error'
                                     onClick={() => {
-                                        // setConfirmDialog({
-                                        //     isOpen: true,
-                                        //     title: 'Справді видалити цей запис?',
-                                        //     subTitle: "Ви не зможете скасувати цю операцію",
-                                        //     onConfirm: () => {
-                                        onDelete(row.id)
-                                        //     }
-                                        // })
+                                        setConfirmService({
+                                            isOpen: true,
+                                            title: 'Справді видалити цей запис?',
+                                            subTitle: "Ви не зможете скасувати цю операцію",
+                                            onConfirm: () => {
+                                                onDelete(row.id)
+                                            }
+                                        })
                                     }}>
                                     <DeleteForeverIcon style={{fontSize: 20}}/>
                                 </IconButton>
@@ -223,6 +226,9 @@ function ServicesList({
                           serviceRecordForEdit,
                           setServiceRecordForEdit,
                           setIsDisabled,
+                          setNotify,
+                          setConfirmService,
+                          confirmService,
                           filterFn
                       }) {
 
@@ -247,9 +253,9 @@ function ServicesList({
                                      setServiceRecords={setServiceRecords}
                                      setServiceRecordForEdit={setServiceRecordForEdit}
                                      setIsDisabled={setIsDisabled}
-                                    // setNotify={setNotify}
-                                    // confirmDialog={confirmDialog}
-                                    // setConfirmDialog={setConfirmDialog}
+                                     setNotify={setNotify}
+                                     confirmService={confirmService}
+                                     setConfirmService={setConfirmService}
 
                                 />
 
@@ -259,6 +265,10 @@ function ServicesList({
                     }
                 </TblContainer>
             </Box>
+            <ConfirmDialog
+                confirmDialog={confirmService}
+                setConfirmDialog={setConfirmService}
+            />
         </Box>
     );
 }

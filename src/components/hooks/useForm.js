@@ -7,7 +7,6 @@ export function useForm(initialValues, validateOnChange = false, validate) {
     const [values, setValues] = useState(initialValues);
     const [errors, setErrors] = useState({});
 
-
     const handleValuesChange = e => {
         let temp = {...values}
         temp[e.target.name] = e.target.value
@@ -59,10 +58,10 @@ export function useForm(initialValues, validateOnChange = false, validate) {
 
 export function Form(props) {
 
-    const {children, ...other} = props;
+    const {children, ref, ...other} = props;
 
     return (
-        <form autoComplete="off" {...other}>
+        <form autoComplete="off" {...other} ref={ref}>
             {props.children}
         </form>
     )

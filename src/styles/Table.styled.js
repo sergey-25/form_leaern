@@ -8,6 +8,7 @@ import {Paper} from "@mui/material";
 export const StyledTableBodyCell = styled(TableCell)(({theme}) => ({
     border: '1px solid rgba(224, 224, 224, 1)',
     padding:'5px',
+    wordBreak:'break-all',
     '&:first-of-type': {
         padding: 0
     },

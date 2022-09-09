@@ -1,19 +1,15 @@
-import * as React from 'react';
-import Box from '@mui/material/Box';
-import Tab from '@mui/material/Tab';
-import TabContext from '@mui/lab/TabContext';
-import TabList from '@mui/lab/TabList';
-import TabPanel from '@mui/lab/TabPanel';
+import React, {useState} from 'react';
+import {Box, Tab} from '@mui/material';
+import {TabContext, TabList, TabPanel} from '@mui/lab';
 import OrdersComponent from "../components/OrdersComponent/OrdersComponent";
 import ServicesComponent from "./ServicesComponent/ServicesComponent";
-import {Grid, Typography} from "@mui/material";
-
+import {Badge, Grid, IconButton} from "@mui/material";
 import * as orderService from "../services/orderService";
 import * as servicesService from "../services/servicesService";
 import SearchIcon from "@mui/icons-material/Search";
+import NotificationsIcon from '@mui/icons-material/Notifications';
 import {Search, SearchIconWrapper, StyledInputBase} from "../styles/Search.styled";
 import SortingMenu from "./SortingMenu";
-import {useState} from "react";
 
 const initialValues = {
     id: 0,
@@ -62,6 +58,9 @@ export default function AmountComponent() {
     });
 
     const [notify, setNotify] = useState({isOpen: false, message: '', type: ''});
+    const [confirmOrder, setConfirmOrder] = useState({isOpen: false, title: '', subTitle: ''});
+    const [confirmService, setConfirmService] = useState({isOpen: false, title: '', subTitle: ''});
+
 
     const handleChange = (event, newValue) => {
         setValue(newValue);
@@ -120,6 +119,16 @@ export default function AmountComponent() {
         )
     };
 
+    const notificationsLabel = (count) => {
+        if (count === 0) {
+            return 'no notifications';
+        }
+        if (count > 99) {
+            return 'more than 99 notifications';
+        }
+        return `${count} notifications`;
+    };
+
     return (
         <Box sx={{width: '100%', typography: 'body1'}}>
             <TabContext value={value} sx={{padding: 0}}>
@@ -162,11 +171,16 @@ export default function AmountComponent() {
                              }}
                         />
                         {value === '1' ?
-                            <Grid container alignItems='center' justifyContent='space-between'>
+                            <Grid container alignItems='center' justifyContent='flex-end'>
                                 <Grid item>
-                                    <Typography>
-                                        Перелік замовлень
-                                    </Typography>
+                                    <IconButton aria-label={notificationsLabel(1)}>
+                                        <Badge badgeContent={1}
+                                               variant='dot'
+                                               color='error'
+                                               sx={{color: '#000'}}>
+                                            <NotificationsIcon sx={{color: '#a4b9d6'}}/>
+                                        </Badge>
+                                    </IconButton>
                                 </Grid>
                                 <Grid item>
                                     <Search onChange={handleSearch}>
@@ -183,20 +197,27 @@ export default function AmountComponent() {
                                     <SortingMenu/>
                                 </Grid>
                             </Grid>
-                            : <Typography sx={{display: 'flex', alignItems: 'center'}}>
-                                Перелік послуг
-                                <Search onChange={handleSearchService}>
-                                    <SearchIconWrapper>
-                                        <SearchIcon/>
-                                    </SearchIconWrapper>
-                                    <StyledInputBase
-                                        placeholder="Пошук…"
-                                        inputProps={{'aria-label': 'search'}}
-                                    />
-                                </Search>
-                            </Typography>}
+                            :
+
+                            <Grid container alignItems='center' justifyContent='flex-end'>
+                                <Grid item>
+                                    <Search onChange={handleSearchService}>
+                                        <SearchIconWrapper>
+                                            <SearchIcon/>
+                                        </SearchIconWrapper>
+                                        <StyledInputBase
+                                            placeholder="Пошук…"
+                                            inputProps={{'aria-label': 'search'}}
+                                        />
+                                    </Search>
+                                </Grid>
+                                <Grid item>
+                                    <SortingMenu/>
+                                </Grid>
+                            </Grid>}
                     </TabList>
                 </Box>
+
                 <TabPanel value="1" sx={{padding: 0}}>
                     <OrdersComponent
                         records={records}
@@ -205,6 +226,8 @@ export default function AmountComponent() {
                         setFilterFn={setFilterFn}
                         notify={notify}
                         setNotify={setNotify}
+                        confirmOrder={confirmOrder}
+                        setConfirmOrder={setConfirmOrder}
                     />
                 </TabPanel>
                 <TabPanel value="2" sx={{padding: 0}}>
@@ -215,6 +238,8 @@ export default function AmountComponent() {
                         setFilterFn={setFilterFn}
                         notify={notify}
                         setNotify={setNotify}
+                        confirmService={confirmService}
+                        setConfirmService={setConfirmService}
                     />
                 </TabPanel>
             </TabContext>

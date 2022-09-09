@@ -21,7 +21,7 @@ export const Search = styled('div')(({theme}) => ({
 export const SearchIconWrapper = styled('div')(({theme}) => ({
     padding: theme.spacing(0, 2),
     height: '100%',
-    color: '#434746',
+    color: '#fff',
     position: 'absolute',
     pointerEvents: 'none',
     display: 'flex',
@@ -30,7 +30,7 @@ export const SearchIconWrapper = styled('div')(({theme}) => ({
 }));
 
 export const StyledInputBase = styled(InputBase)(({theme}) => ({
-    color: '#434746',
+    color: '#fff',
     '& .MuiInputBase-input': {
         padding: theme.spacing(1, 1, 1, 0),
         // vertical padding + font size from searchIcon

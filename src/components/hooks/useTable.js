@@ -106,11 +106,15 @@ export default function useTable(records, headCells, filterFn, serviceRecords) {
             return 1;
         }
         return 0;
-    }
+    };
+
+
+
 
     const recordsAfterPagingAndSorting = () => {
         if (records) {
             return stableSort(filterFn.fn(records), getComparator(order, orderBy))
+
         } else
             return stableSort(filterFn.fn(serviceRecords), getComparator(order, orderBy))
 

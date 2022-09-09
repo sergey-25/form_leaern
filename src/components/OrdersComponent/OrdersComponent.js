@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useRef, useState} from 'react';
 import * as employeeService from "../../services/orderService";
 import OrderForm from "./orderForm/OrderForm";
 import OrderList from "./OrderList";
@@ -6,6 +6,11 @@ import Notification from "../Notification";
 import {AppBar, Box, Dialog, Fab, Slide, Toolbar, Typography, Tooltip, IconButton} from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import PrintOutlinedIcon from '@mui/icons-material/PrintOutlined';
+import {useReactToPrint} from "react-to-print";
+import jsPDF from 'jspdf';
+import autoTable from 'jspdf-autotable';
+import {useForm} from "../hooks/useForm";
+import FinalDocument from "./toPdf/FinalDocument";
 
 
 const initialValues = {
@@ -47,13 +52,22 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 });
 
 
-function OrdersComponent({records, setRecords, filterFn, setFilterFn, notify, setNotify}) {
+function OrdersComponent({
+                             records,
+                             setRecords,
+                             filterFn,
+                             setFilterFn,
+                             notify,
+                             setNotify,
+                             confirmOrder,
+                             setConfirmOrder
+                         }) {
 
     const [openForm, setOpenForm] = useState(false);
     const [isLoading, setIsLoading] = useState(true);
     const [recordForEdit, setRecordForEdit] = useState(null);
     const [isDisabled, setIsDisabled] = useState(false);
-    const [confirmDialog, setConfirmDialog] = useState({isOpen: false, title: '', subTitle: ''});
+    const [isPrint, setIsPrint]= useState({})
 
 
     const addOrEdit = (order, resetForm) => {
@@ -71,9 +85,58 @@ function OrdersComponent({records, setRecords, filterFn, setFilterFn, notify, se
             type: 'success'
         })
     };
+    const handlePrint = (item, e)=>{
+        setIsPrint(item)
+        console.log(item)
+    }
+
+
+
+    const componentRef = useRef();
+    const handlePrinte = useReactToPrint({
+        content: () => componentRef.current
+    });
+    const columns = [
+        {header: 'Категорія', field: 'category'},
+        {header: 'Найменування', field: 'full_name'},
+        {header: 'Колір', field: 'color'},
+        {header: 'Розмір', field: 'size'},
+        {header: 'Кількість', field: 'amount'},
+        {header: 'Посилання', field: 'link'},
+        {header: 'Коментар', field: 'comment'},
+        {header: 'Термін', field: 'term'},
+        {header: 'Важливість', field: 'priority'},
+        // {title:'', field:''}
+    ];
+    const {
+        values
+    } = useForm();
+
+    const char = JSON.stringify(columns.map((col) => (col.header.toString())))
+    const downloadPdf = () => {
+        const doc = new jsPDF('p', 'pt',)
+
+        autoTable(doc, ({
+
+            // columnStyles: { europe: { align: 'center' } }, // European countries centered
+            // body: [
+            //     { europe: 'Sweden', america: 'Canada', asia: 'China' },
+            //     { europe: 'Norway', america: 'Mexico', asia: 'Japan' },
+            // ],
+            head: columns.map((col) => (col.header.toString('utf8')))
+            // columns: [
+            //     { header: 'Європа', dataKey: 'europe' },
+            //     { header: 'Asia', dataKey: 'asia' },
+            //     { header: 'America', dataKey: 'america' },
+            // ],
+
+        }))
+        doc.save('cxcxz')
+    }
 
     return (
         <div>
+            <button onClick={(item)=>handlePrint(item)}>print</button>
             <Box>
                 <Tooltip title='Створити заявку'>
                     <Fab
@@ -126,22 +189,27 @@ function OrdersComponent({records, setRecords, filterFn, setFilterFn, notify, se
                                         Редагувати замовлення
                                     </Typography>
                                     :
-                                    <Typography sx={{
-                                        ml: 2, flex: 1, color: '#a4b9d6',
-                                        fontWeight: 'bold',
-                                        letterSpacing: '2px'
-                                    }}
-                                                variant="h6"
-                                                component="div">
-                                        Перегляд замовлення
-                                    </Typography>
+                                    <>
+                                        <Typography sx={{
+                                            ml: 2, flex: 1, color: '#a4b9d6',
+                                            fontWeight: 'bold',
+                                            letterSpacing: '2px'
+                                        }}
+                                                    variant="h6"
+                                                    component="div">
+                                            Перегляд замовлення
+                                        </Typography>
+
+                                        <IconButton onClick={() => downloadPdf()}>
+                                            <PrintOutlinedIcon style={{color: '#a4b9d6'}}/>
+                                        </IconButton>
+                                    </>
                             }
-                            <IconButton>
-                                <PrintOutlinedIcon style={{color: '#a4b9d6'}}/>
-                            </IconButton>
+
                         </Toolbar>
                     </AppBar>
                     <OrderForm
+                        componentRef={componentRef}
                         isLoading={isLoading}
                         setIsLoading={setIsLoading}
                         setOpenForm={setOpenForm}
@@ -153,7 +221,10 @@ function OrdersComponent({records, setRecords, filterFn, setFilterFn, notify, se
                         addOrEdit={addOrEdit}
                     />
                 </Dialog>
+                <FinalDocument records={records}
+                />
                 <OrderList
+                    handlePrint={handlePrint}
                     isLoading={isLoading}
                     setIsLoading={setIsLoading}
                     setOpenForm={setOpenForm}
@@ -162,8 +233,8 @@ function OrdersComponent({records, setRecords, filterFn, setFilterFn, notify, se
                     setIsDisabled={setIsDisabled}
                     records={records}
                     setRecords={setRecords}
-                    confirmDialog={confirmDialog}
-                    setConfirmDialog={setConfirmDialog}
+                    confirmOrder={confirmOrder}
+                    setConfirmOrder={setConfirmOrder}
                     notify={notify}
                     setNotify={setNotify}
                     filterFn={filterFn}

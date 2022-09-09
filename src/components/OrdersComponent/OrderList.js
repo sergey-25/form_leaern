@@ -6,15 +6,8 @@ import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import useTable from "../hooks/useTable";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import {
-    Menu,
-    MenuItem,
-    Tooltip,
-    AppBar,
-    Toolbar,
-    Box,
-    Link,
-    Button, Paper, Typography, TableRow, TableHead, TableCell, TableBody, Collapse,
-    CircularProgress, Grid
+    Menu, MenuItem, Tooltip, Box, Link, Paper, Typography, TableRow,
+    TableHead, TableCell, TableBody, Collapse, CircularProgress, Grid, Chip
 } from "@mui/material";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import EditIcon from "@mui/icons-material/Edit";
@@ -26,7 +19,6 @@ import mediumPriorityIcon from '../../assets/svg/medium-priority_1.svg'
 import lowPriorityIcon from '../../assets/svg/low-priority_2.svg'
 // import mySvg from '../../assets/images/img_nodatafound.svg'
 import ConfirmDialog from "../ConfirmDialog";
-import DeleteRecordButton from "../controls/DeleteRecordButton"
 import {
     StyledDetailsTable, StyledDetailsTableBodyCell,
     StyledDetailsTableHeadCell,
@@ -42,6 +34,7 @@ const headCells = [
     {id: 'recipient', label: 'Одержувач'},
     {id: 'comment', label: 'Коментар'},
     {id: 'date', label: 'Дата подачі'},
+    {id: 'status', label: 'Статус'},
     {id: 'actions', label: 'Дії', disableSorting: true}
 ];
 
@@ -52,14 +45,14 @@ function Row({
                  setRecordForEdit,
                  setOpenForm,
                  setNotify,
-                 confirmDialog,
-                 setConfirmDialog,
+                 confirmOrder,
+                 setConfirmOrder,
                  setIsDisabled
              }) {
 
     const [open, setOpen] = React.useState(false);
     const [anchorEl, setAnchorEl] = useState(false);
-
+    const [isStatus, setIsStatus] = useState({})
 
     const openMenu = Boolean(anchorEl);
     const handleClick = (event) => {
@@ -84,8 +77,8 @@ function Row({
 
 
     const onDelete = id => {
-        setConfirmDialog({
-            ...confirmDialog,
+        setConfirmOrder({
+            ...confirmOrder,
             isOpen: false
         })
         employeeService.deleteEmployee(id);
@@ -118,6 +111,15 @@ function Row({
                 <StyledTableBodyCell
                     style={{width: '75px'}}>
                     {moment(row.date).format("DD-MM-YYYY")}
+                </StyledTableBodyCell>
+                <StyledTableBodyCell
+                    width='2%'
+                    align='center'>
+                    <Chip
+                        sx={{fontSize: '10px', fontWeight: 'bolder'}}
+                        label="Нове "
+                        color="primary"
+                        size="small"/>
                 </StyledTableBodyCell>
                 <StyledTableBodyCell align='center'>
                     <IconButton
@@ -184,7 +186,7 @@ function Row({
                                 <IconButton
                                     color='error'
                                     onClick={() => {
-                                        setConfirmDialog({
+                                        setConfirmOrder({
                                             isOpen: true,
                                             title: 'Справді видалити цей запис?',
                                             subTitle: "Ви не зможете скасувати цю операцію",
@@ -296,6 +298,7 @@ function Row({
 };
 
 export default function OrderList({
+                                      handlePrint,
                                       isLoading,
                                       setIsLoading,
                                       setOpenForm,
@@ -304,8 +307,9 @@ export default function OrderList({
                                       records,
                                       setRecords,
                                       setNotify,
-                                      confirmDialog,
-                                      setConfirmDialog, filterFn
+                                      confirmOrder,
+                                      setConfirmOrder,
+                                      filterFn
                                   }) {
     // const [filterFn, setFilterFn] = useState({
     //     fn: items => {
@@ -400,19 +404,21 @@ export default function OrderList({
                             {records.length ?
                                 <TableBody>
                                     {recordsAfterPagingAndSorting().map((row, i) => (
+                                        <>
+                                            {handlePrint(row)}
+                                            <Row key={i}
+                                                 row={row}
+                                                 setOpenForm={setOpenForm}
+                                                // setOpenService={setOpenService}
+                                                 setRecords={setRecords}
+                                                 setRecordForEdit={setRecordForEdit}
+                                                 setIsDisabled={setIsDisabled}
+                                                 setNotify={setNotify}
+                                                 confirmOrder={confirmOrder}
+                                                 setConfirmOrder={setConfirmOrder}
 
-                                        <Row key={i}
-                                             row={row}
-                                             setOpenForm={setOpenForm}
-                                            // setOpenService={setOpenService}
-                                             setRecords={setRecords}
-                                             setRecordForEdit={setRecordForEdit}
-                                             setIsDisabled={setIsDisabled}
-                                             setNotify={setNotify}
-                                             confirmDialog={confirmDialog}
-                                             setConfirmDialog={setConfirmDialog}
-
-                                        />
+                                            />
+                                        </>
 
                                     ))}
                                 </TableBody>
@@ -433,8 +439,8 @@ export default function OrderList({
 
                     </Box>
                     <ConfirmDialog
-                        confirmDialog={confirmDialog}
-                        setConfirmDialog={setConfirmDialog}
+                        confirmDialog={confirmOrder}
+                        setConfirmDialog={setConfirmOrder}
                     />
                 </>
             }

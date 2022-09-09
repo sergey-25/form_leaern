@@ -1,10 +1,11 @@
 import React, {useState} from 'react';
-import {AppBar, Box, Dialog, Fab, Toolbar, Typography} from "@mui/material";
-import ServiceForm from "./ServiceForm";
-import ServicesList from "./ServicesList";
-import AddIcon from "@mui/icons-material/Add";
 import * as servicesService from "../../services/servicesService";
 import Notification from "../Notification";
+import ServiceForm from "./ServiceForm";
+import ServicesList from "./ServicesList";
+
+import {AppBar, Box, Dialog, Fab, Toolbar, Typography} from "@mui/material";
+import AddIcon from "@mui/icons-material/Add";
 
 
 const initialValues = {
@@ -32,7 +33,9 @@ function ServicesComponent({
                                filterFn,
                                setFilterFn,
                                notify,
-                               setNotify
+                               setNotify,
+                               confirmService,
+                               setConfirmService
                            }) {
 
 
@@ -56,6 +59,7 @@ function ServicesComponent({
             type: 'success'
         })
     };
+
     return (
         <>
             <Box>
@@ -139,6 +143,9 @@ function ServicesComponent({
                     setIsDisabled={setIsDisabled}
                     filterFn={filterFn}
                     setFilterFn={setFilterFn}
+                    setNotify={setNotify}
+                    confirmService={confirmService}
+                    setConfirmService={setConfirmService}
                 />
                 <Notification
                     notify={notify}

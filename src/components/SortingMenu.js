@@ -37,7 +37,7 @@ export default function SortingMenu() {
                 aria-haspopup="true"
                 onClick={handleClick}
             >
-                <FilterListOutlinedIcon />
+                <FilterListOutlinedIcon sx={{color:'#a4b9d6'}}/>
             </IconButton>
             <Menu
                 id="long-menu"
